@@ -15,7 +15,8 @@ if (port == "" || port == null) {
 builder.WebHost.UseUrls($"http://*:{port}");
 var app = builder.Build();
 
-app.MapGet($"/{Configuration.API_PREFIX}", () => {
+// sign-in
+app.MapPost($"/{Configuration.API_PREFIX}", async (HttpRequest request) => {
   return "hey";
 });
 
@@ -27,8 +28,8 @@ app.MapPost($"/{Configuration.API_PREFIX}/sign-up", async (HttpRequest request) 
     parsed.Cast<string>().ToDictionary(k => k, v => parsed[v])
   );
   SignUpDTO? data = JsonConvert.DeserializeObject<SignUpDTO>(json);
-  if (data == null || data?.email == null
-    || data?.name == null || data?.password == null) {
+  if (data == null || data.email == null
+    || data.name == null || data.password == null) {
     ServerResponse res = new ServerResponse();
     res.info = Configuration.RESPONSE_MESSAGES.missingData;
     res.status = Configuration.RESPONSE_STATUSES.badRequest;
@@ -40,6 +41,11 @@ app.MapPost($"/{Configuration.API_PREFIX}/sign-up", async (HttpRequest request) 
   string trimmedPassword = data.password.Trim();
 
   // TODO: check if email address is already in use
+
+  // TODO: create JWT
+
+  
+
   return "hey";
 });
 
