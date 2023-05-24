@@ -15,14 +15,19 @@ if (port == "" || port == null) {
 builder.WebHost.UseUrls($"http://*:{port}");
 var app = builder.Build();
 
+// ping the server
+app.MapGet("/", () => Results.Ok(new ServerResponse()));
+app.MapGet($"/{Configuration.API_PREFIX}", () => Results.Ok(new ServerResponse()));
+
 // sign-in
-app.MapPost($"/{Configuration.API_PREFIX}", async (HttpRequest request) => {
-  return "hey";
-});
+app.MapPost(
+  $"/{Configuration.API_PREFIX}/sign-in", 
+  () => Results.Ok(new ServerResponse())
+);
 
 // sign-up
-app.MapPost($"/{Configuration.API_PREFIX}/sign-up", async (HttpRequest request) => {
-  string body = await new StreamReader(request.Body).ReadToEndAsync();
+app.MapPost($"/{Configuration.API_PREFIX}/sign-up", async (context) => {
+  string body = await new StreamReader(context.Request.Body).ReadToEndAsync();
   var parsed = HttpUtility.ParseQueryString(body);
   string json = JsonConvert.SerializeObject(
     parsed.Cast<string>().ToDictionary(k => k, v => parsed[v])
@@ -30,10 +35,12 @@ app.MapPost($"/{Configuration.API_PREFIX}/sign-up", async (HttpRequest request) 
   SignUpDTO? data = JsonConvert.DeserializeObject<SignUpDTO>(json);
   if (data == null || data.email == null
     || data.name == null || data.password == null) {
-    ServerResponse res = new ServerResponse();
-    res.info = Configuration.RESPONSE_MESSAGES.missingData;
-    res.status = Configuration.RESPONSE_STATUSES.badRequest;
-    return JsonConvert.SerializeObject(res);
+    await context.Response.WriteAsJsonAsync<ServerResponse>(new ServerResponse
+    {
+      info = Configuration.RESPONSE_MESSAGES.missingData,
+      status = Configuration.RESPONSE_STATUSES.badRequest,
+    });
+    return;
   }
 
   string trimmedEmail = data.email.Trim();
@@ -44,9 +51,7 @@ app.MapPost($"/{Configuration.API_PREFIX}/sign-up", async (HttpRequest request) 
 
   // TODO: create JWT
 
-  
-
-  return "hey";
+  return;
 });
 
 app.Run();
