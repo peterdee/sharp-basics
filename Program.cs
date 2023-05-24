@@ -1,6 +1,7 @@
 using dotenv.net;
 using Newtonsoft.Json;
 using System.Web;
+using Isopoh.Cryptography.Argon2;
 
 // load dotenv
 DotEnv.Load(options: new DotEnvOptions(ignoreExceptions: false));
@@ -34,7 +35,9 @@ app.MapPost($"/{Configuration.API_PREFIX}/sign-up", async (context) => {
   );
   SignUpDTO? data = JsonConvert.DeserializeObject<SignUpDTO>(json);
   if (data == null || data.email == null
-    || data.name == null || data.password == null) {
+    || data.name == null || data.password == null)
+  {
+    context.Response.StatusCode = Configuration.RESPONSE_STATUSES.badRequest;
     await context.Response.WriteAsJsonAsync<ServerResponse>(new ServerResponse
     {
       info = Configuration.RESPONSE_MESSAGES.missingData,
@@ -46,11 +49,29 @@ app.MapPost($"/{Configuration.API_PREFIX}/sign-up", async (context) => {
   string trimmedEmail = data.email.Trim();
   string trimmedName = data.name.Trim();
   string trimmedPassword = data.password.Trim();
+  if (trimmedEmail == "" || trimmedName == "" || trimmedPassword == "")
+  {
+    context.Response.StatusCode = Configuration.RESPONSE_STATUSES.badRequest;
+    await context.Response.WriteAsJsonAsync<ServerResponse>(new ServerResponse
+    {
+      info = Configuration.RESPONSE_MESSAGES.missingData,
+      status = Configuration.RESPONSE_STATUSES.badRequest,
+    });
+    return;
+  }
 
   // TODO: check if email address is already in use
 
+  string passwordHash = Argon2.Hash(trimmedPassword);
+
+  // TODO: store data in the database
+
   // TODO: create JWT
 
+  await context.Response.WriteAsJsonAsync<ServerResponse<string>>(new ServerResponse<string>
+  {
+    data = "token",
+  });
   return;
 });
 

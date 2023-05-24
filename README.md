@@ -1,8 +1,10 @@
-## csharp-basic
+## sharp-basics
 
 Basic things with a C# server
 
-### Launching
+### Launch
+
+Development
 
 ```shell script
 dotnet watch run ./

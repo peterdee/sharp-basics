@@ -11,5 +11,5 @@ public class ServerResponse {
 }
 
 public class ServerResponse<T> : ServerResponse {
-  public T? data;
+  public T? data { get; set; }
 }
