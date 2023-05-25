@@ -4,6 +4,7 @@ public class Configuration {
   public const string DEFAULT_TOKEN_SECRET = "my-secret";
 
   public class RESPONSE_MESSAGES {
+    public const string emailAreadyInUse = "EMAIL_ALREADY_IN_USE";
     public const string missingData = "MISSING_DATA";
     public const string ok = "OK";
   }
