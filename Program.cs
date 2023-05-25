@@ -66,12 +66,17 @@ app.MapPost($"/{Configuration.API_PREFIX}/sign-up", async (context) => {
 
   // TODO: store data in the database
 
-  // TODO: create JWT
+  string token = JWTService.createToken("my-user");
 
-  await context.Response.WriteAsJsonAsync<ServerResponse<string>>(new ServerResponse<string>
-  {
-    data = "token",
-  });
+  await context.Response.WriteAsJsonAsync<ServerResponse<Dictionary<string, object>>>(
+    new ServerResponse<Dictionary<string, object>>
+    {
+      data = new Dictionary<string, object>
+      {
+        { "token", token }
+      }
+    }
+  );
   return;
 });
 
