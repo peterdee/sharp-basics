@@ -7,10 +7,12 @@ public class Configuration {
     public const string emailAreadyInUse = "EMAIL_ALREADY_IN_USE";
     public const string missingData = "MISSING_DATA";
     public const string ok = "OK";
+    public const string unauthorized = "UNAUTHORIZED";
   }
 
   public class RESPONSE_STATUSES {
     public const int badRequest = 400;
     public const int ok = 200;
+    public const int unauthorized = 401;
   }
 }
