@@ -7,7 +7,7 @@ public class Configuration {
     public const string emailAreadyInUse = "EMAIL_ALREADY_IN_USE";
     public const string missingData = "MISSING_DATA";
     public const string ok = "OK";
-    public const string unauthorized = "UNAUTHORIZED";
+    public const string unauthorized = "";
   }
 
   public class RESPONSE_STATUSES {

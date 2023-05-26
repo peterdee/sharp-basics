@@ -223,4 +223,30 @@ app.MapPost(
   }
 );
 
+app.MapGet(
+  $"/{Configuration.API_PREFIX}/users",
+  async (DB db, HttpContext context, int? page, int? limit) =>
+  {
+    var count = db.Users.Count();
+    Pagination.PaginationResult pagination = Pagination.getPagination(page, limit, count);
+    var users = db.Users
+      .OrderBy(user => user.Id)
+      .Take(pagination.limit)
+      .Skip(pagination.offset)
+      .ToList();
+
+    await context.Response.WriteAsJsonAsync<ServerResponse<Dictionary<string, object>>>(
+      new ServerResponse<Dictionary<string, object>>
+      {
+        data = new Dictionary<string, object>
+        {
+          { "pagination", pagination },
+          { "users", users },
+        }
+      }
+    );
+    return;
+  }
+);
+
 app.Run();
